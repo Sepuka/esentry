@@ -2,8 +2,7 @@
 
 -include_lib("esentry/include/esentry.hrl").
 
--export([headers/0]).
--export([send/0]).
+-export([send/1]).
 
 -define(X_SENTRY_AUTH,
   <<"Sentry sentry_version=", ?SENTRY_VERSION, ",",
@@ -21,5 +20,14 @@ headers() ->
     {<<"User-Agent">>, ?ESENTRY_USER_AGENT}
   ].
 
-send() ->
-  httpc:request(post, {<<"Url">>, headers(), <<"ContentType">>, <<"Body">>}).
+url() ->
+  ProjectId = esentry_config:get_project_id(),
+  Path = <<"/api/", ProjectId, "/store/">>,
+  Host = esentry_config:get_host(),
+  <<"https://", Host, Path>>.
+
+send(Body) when is_map(Body) ->
+  JSON = jsx:encode(Body),
+  send(JSON);
+send(Body) ->
+  httpc:request(post, {url(), headers(), <<"application/json">>, Body}).
