@@ -1,0 +1,12 @@
+{application, esentry,
+ [
+  {description, ""},
+  {vsn, ""},
+  {registered, []},
+  {applications, [
+                  kernel,
+                  stdlib
+                 ]},
+  {mod, { esentry_app, []}},
+  {env, []}
+ ]}.

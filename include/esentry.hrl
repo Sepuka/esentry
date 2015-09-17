@@ -1,0 +1,4 @@
+-define(SENTRY_VERSION, 7).
+-define(ESENTRY_VERSION, 0).
+-define(CLIENT_NAME, <<"esentry">>).
+-define(ESENTRY_USER_AGENT, <<"esentry/", ?ESENTRY_VERSION>>).
