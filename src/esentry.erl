@@ -1,5 +1,7 @@
 -module(esentry).
 
+-include_lib("esentry/include/esentry.hrl").
+
 -export([fatal/1]).
 -export([fatal/2]).
 -export([error/1]).
@@ -12,7 +14,7 @@
 -export([debug/2]).
 
 fatal(Msg) ->
-  Request = build_request(Msg),
+  Request = build_request(Msg, ?LEVEL_FATAL),
   esentry_protocol:send(Request).
 
 fatal(Template, Args) ->
@@ -20,7 +22,7 @@ fatal(Template, Args) ->
   fatal(Msg).
 
 error(Msg) ->
-  Request = build_request(Msg),
+  Request = build_request(Msg, ?LEVEL_ERROR),
   esentry_protocol:send(Request).
 
 error(Template, Args) ->
@@ -28,7 +30,7 @@ error(Template, Args) ->
   error(Msg).
 
 warning(Msg) ->
-  Request = build_request(Msg),
+  Request = build_request(Msg, ?LEVEL_WARNING),
   esentry_protocol:send(Request).
 
 warning(Template, Args) ->
@@ -36,7 +38,7 @@ warning(Template, Args) ->
   warning(Msg).
 
 info(Msg) ->
-  Request = build_request(Msg),
+  Request = build_request(Msg, ?LEVEL_INFO),
   esentry_protocol:send(Request).
 
 info(Template, Args) ->
@@ -44,7 +46,7 @@ info(Template, Args) ->
   info(Msg).
 
 debug(Msg) ->
-  Request = build_request(Msg),
+  Request = build_request(Msg, ?LEVEL_DEBUG),
   esentry_protocol:send(Request).
 
 debug(Template, Args) ->
@@ -61,8 +63,13 @@ event_id() ->
   <<Part1, Part2, Part3, Part4, Part5>>.
 
 build_request(Msg) ->
+  build_request(Msg, ?LEVEL_ERROR).
+
+build_request(Msg, Level) ->
   #{
     event_id => event_id(),
     message => Msg,
-    timestamp => erlang:timestamp()
+    timestamp => erlang:timestamp(),
+    level => Level,
+    loger => ?LOGER_NAME
   }.
