@@ -45,7 +45,7 @@ info(Template, Args) ->
 
 debug(Msg) ->
   Request = build_request(Msg),
-  esentry_protocol:send(Request)..
+  esentry_protocol:send(Request).
 
 debug(Template, Args) ->
   Msg = build_msg(Template, Args),
@@ -55,8 +55,10 @@ build_msg(Template, Args) ->
   io_lib:format(Template, Args).
 
 %% @private
+-spec event_id() -> binary().
 event_id() ->
-  ok.
+  <<Part1:8, "-", Part2:4, "-", Part3:4, "-", Part4:4, "-", Part5:12>> = uuid:get_v4(),
+  <<Part1, Part2, Part3, Part4, Part5>>.
 
 build_request(Msg) ->
   #{
