@@ -71,5 +71,6 @@ build_request(Msg, Level) ->
     message => Msg,
     timestamp => erlang:timestamp(),
     level => Level,
-    loger => ?LOGER_NAME
+    loger => ?LOGER_NAME,
+    platform => <<"erlang">>
   }.
