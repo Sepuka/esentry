@@ -69,7 +69,7 @@ build_request(Msg, Level) ->
   #{
     event_id => event_id(),
     message => Msg,
-    timestamp => erlang:timestamp(),
+    timestamp => qdate:unixtime(),
     level => Level,
     loger => ?LOGER_NAME,
     platform => <<"erlang">>
