@@ -4,8 +4,8 @@
 
 -export([fatal/1]).
 -export([fatal/2]).
--export([error/1]).
--export([error/2]).
+-export([err/1]).
+-export([err/2]).
 -export([warning/1]).
 -export([warning/2]).
 -export([info/1]).
@@ -21,13 +21,13 @@ fatal(Template, Args) ->
   Msg = build_msg(Template, Args),
   fatal(Msg).
 
-error(Msg) ->
+err(Msg) ->
   Request = build_request(Msg, ?LEVEL_ERROR),
   esentry_protocol:send(Request).
 
-error(Template, Args) ->
+err(Template, Args) ->
   Msg = build_msg(Template, Args),
-  error(Msg).
+  err(Msg).
 
 warning(Msg) ->
   Request = build_request(Msg, ?LEVEL_WARNING),
