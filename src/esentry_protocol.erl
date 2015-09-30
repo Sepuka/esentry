@@ -4,14 +4,17 @@
 
 -export([send/1]).
 
--define(X_SENTRY_AUTH,
-  <<"Sentry sentry_version=", ?SENTRY_VERSION, ",",
-  <<"sentry_client=">>, ?SENTRY_CLIENT>>, ",",
-  <<"sentry_timestamp ">>, erlang:timestamp(), ",",
-  <<"sentry_key=">>, esentry_config:get_public_key(), ",",
-  <<"sentry_secret=">>, esentry_config:get_secret_key()
-).
--define(SENTRY_CLIENT, <<?CLIENT_NAME, "/", ?ESENTRY_VERSION>>).
+-define(SENTRY_TIMESTAMP, qdate:unixtime()).
+-define(SENTRY_CLIENT, <<?CLIENT_NAME/binary, "/", ?ESENTRY_VERSION>>).
+-define(X_SENTRY_AUTH, iolist_to_binary(
+  [
+    "Sentry sentry_version=", ?SENTRY_VERSION, ",",
+    "sentry_client=", ?SENTRY_CLIENT, ",",
+    "sentry_timestamp=", ?SENTRY_TIMESTAMP, ",",
+    "sentry_key=", esentry_config:get_public_key(), ",",
+    "sentry_secret=", esentry_config:get_secret_key()
+  ]
+)).
 
 headers() ->
   [
