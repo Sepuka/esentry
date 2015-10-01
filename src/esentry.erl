@@ -59,8 +59,12 @@ build_msg(Template, Args) ->
 %% @private
 -spec event_id() -> binary().
 event_id() ->
-  <<Part1:8, "-", Part2:4, "-", Part3:4, "-", Part4:4, "-", Part5:12>> = uuid:get_v4(),
-  <<Part1, Part2, Part3, Part4, Part5>>.
+  <<Byte1:8, Byte2:8, Byte3:8, Byte4:8, Byte5:8, Byte6:8, Byte7:8, Byte8:8,
+  Byte9:8, Byte10:8, Byte11:8, Byte12:8, Byte13:8, Byte14:8, Byte15:8, Byte16:8>> = uuid:get_v4(),
+  io_lib:format(
+    "~.16B~.16B~.16B~.16B~.16B~.16B~.16B~.16B~.16B~.16B~.16B~.16B~.16B~.16B~.16B~.16B",
+    [Byte1, Byte2, Byte3, Byte4, Byte5, Byte6, Byte7, Byte8, Byte9, Byte10, Byte11, Byte12, Byte13, Byte14, Byte15, Byte16]
+  ).
 
 build_request(Msg) ->
   build_request(Msg, ?LEVEL_ERROR).
