@@ -2,6 +2,7 @@
 
 -include_lib("esentry/include/esentry.hrl").
 
+-export([log/2]).
 -export([fatal/1]).
 -export([fatal/2]).
 -export([err/1]).
@@ -12,6 +13,17 @@
 -export([info/2]).
 -export([debug/1]).
 -export([debug/2]).
+
+log(fatal, Message) ->
+  fatal(Message);
+log(error, Message) ->
+  err(Message);
+log(warning, Message) ->
+  warning(Message);
+log(info, Message) ->
+  info(Message);
+log(debug, Message) ->
+  debug(Message).
 
 fatal(Msg) ->
   Request = build_request(Msg, ?LEVEL_FATAL),
