@@ -1,7 +1,7 @@
 -define(SENTRY_VERSION, 7).
--define(ESENTRY_VERSION, 0).
+-define(ESENTRY_VERSION, 0.1).
 -define(CLIENT_NAME, <<"esentry">>).
--define(ESENTRY_USER_AGENT, io_lib:format("esentry/~B", [?ESENTRY_VERSION])).
+-define(ESENTRY_USER_AGENT, io_lib:format("esentry/~p", [?ESENTRY_VERSION])).
 
 -define(LEVEL_FATAL, <<"fatal">>).
 -define(LEVEL_ERROR, <<"error">>).
