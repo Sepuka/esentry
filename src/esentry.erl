@@ -14,16 +14,23 @@
 -export([debug/1]).
 -export([debug/2]).
 
-log(fatal, Message) ->
+log(emergency, Message) ->
+  fatal(Message);
+log(alert, Message) ->
+  error(Message);
+log(critical, Message) ->
   fatal(Message);
 log(error, Message) ->
   err(Message);
 log(warning, Message) ->
   warning(Message);
+log(notice, Message) ->
+  warning(Message);
 log(info, Message) ->
   info(Message);
 log(debug, Message) ->
   debug(Message).
+
 
 fatal(Msg) ->
   Request = build_request(Msg, ?LEVEL_FATAL),
