@@ -3,77 +3,66 @@
 -include_lib("esentry/include/esentry.hrl").
 
 -export([log/2]).
--export([fatal/1]).
+-export([log/3]).
 -export([fatal/2]).
--export([err/1]).
 -export([err/2]).
--export([warning/1]).
 -export([warning/2]).
--export([info/1]).
 -export([info/2]).
--export([debug/1]).
 -export([debug/2]).
 
 log(emergency, Message) ->
-  fatal(Message);
+  fatal(Message, #{});
 log(alert, Message) ->
-  error(Message);
+  error(Message, #{});
 log(critical, Message) ->
-  fatal(Message);
+  fatal(Message, #{});
 log(error, Message) ->
-  err(Message);
+  err(Message, #{});
 log(warning, Message) ->
-  warning(Message);
+  warning(Message, #{});
 log(notice, Message) ->
-  warning(Message);
+  warning(Message, #{});
 log(info, Message) ->
-  info(Message);
+  info(Message, #{});
 log(debug, Message) ->
-  debug(Message).
+  debug(Message, #{}).
 
+log(emergency, Message, Metadata) ->
+  fatal(Message, Metadata);
+log(alert, Message, Metadata) ->
+  error(Message, Metadata);
+log(critical, Message, Metadata) ->
+  fatal(Message, Metadata);
+log(error, Message, Metadata) ->
+  err(Message, Metadata);
+log(warning, Message, Metadata) ->
+  warning(Message, Metadata);
+log(notice, Message, Metadata) ->
+  warning(Message, Metadata);
+log(info, Message, Metadata) ->
+  info(Message, Metadata);
+log(debug, Message, Metadata) ->
+  debug(Message, Metadata).
 
-fatal(Msg) ->
-  Request = build_request(Msg, ?LEVEL_FATAL),
+fatal(Msg, Metadata) ->
+  Request = build_request(Msg, ?LEVEL_FATAL, Metadata),
   esentry_protocol:send(Request).
 
-fatal(Template, Args) ->
-  Msg = build_msg(Template, Args),
-  fatal(Msg).
-
-err(Msg) ->
-  Request = build_request(Msg, ?LEVEL_ERROR),
+err(Msg, Metadata) ->
+  Request = build_request(Msg, ?LEVEL_ERROR, Metadata),
   esentry_protocol:send(Request).
 
-err(Template, Args) ->
-  Msg = build_msg(Template, Args),
-  err(Msg).
-
-warning(Msg) ->
-  Request = build_request(Msg, ?LEVEL_WARNING),
+warning(Msg, Metadata) ->
+  Request = build_request(Msg, ?LEVEL_WARNING, Metadata),
   esentry_protocol:send(Request).
 
-warning(Template, Args) ->
-  Msg = build_msg(Template, Args),
-  warning(Msg).
-
-info(Msg) ->
-  Request = build_request(Msg, ?LEVEL_INFO),
+info(Msg, Metadata) ->
+  Request = build_request(Msg, ?LEVEL_INFO, Metadata),
   esentry_protocol:send(Request).
 
-info(Template, Args) ->
-  Msg = build_msg(Template, Args),
-  info(Msg).
-
-debug(Msg) ->
-  Request = build_request(Msg, ?LEVEL_DEBUG),
+debug(Msg, Metadata) ->
+  Request = build_request(Msg, ?LEVEL_DEBUG, Metadata),
   esentry_protocol:send(Request).
-
-debug(Template, Args) ->
-  Msg = build_msg(Template, Args),
-  debug(Msg).
-
-build_msg(Template, Args) ->
-  io_lib:format(Template, Args).
 
 %% @private
 -spec event_id() -> binary().
@@ -86,10 +75,10 @@ event_id() ->
   ),
   list_to_binary(lists:flatten(io_lib:format("~32..0s", [ByteList]))).
 
-build_request(Msg, Level) when is_list(Msg) ->
-  build_request(list_to_binary(Msg), Level);
-build_request(Msg, Level) ->
-  #{
+build_request(Msg, Level, Metadata) when is_list(Msg) ->
+  build_request(list_to_binary(Msg), Level, Metadata);
+build_request(Msg, Level, Metadata) ->
+  Metadata#{
     event_id => event_id(),
     message => Msg,
     timestamp => qdate:unixtime(),
