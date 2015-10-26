@@ -6,7 +6,11 @@ format_reason({Reason, Details}) ->
   BinaryReason = atom_to_binary(Reason, utf8),
   BinaryDetails = to_binary(Details),
   Trace = format_stacktrace(erlang:get_stacktrace()),
-  <<BinaryReason/binary, ":", BinaryDetails/binary, 10, 13, "StackTrace:", Trace/binary>>.
+  <<BinaryReason/binary, ":", BinaryDetails/binary, 10, 13, "StackTrace:", Trace/binary>>;
+format_reason(Reason) ->
+  BinaryReason = atom_to_binary(Reason, utf8),
+  Trace = format_stacktrace(erlang:get_stacktrace()),
+  <<BinaryReason/binary, ":", 10, 13, "StackTrace:", Trace/binary>>.
 
 to_binary(Map) ->
   jsx:encode(Map).
