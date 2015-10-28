@@ -17,11 +17,12 @@ to_binary(Map) ->
 
 format_stacktrace([]) ->
   <<>>;
-format_stacktrace([{Module, Func, Arity, [{file, Path}, {line, Line}]} | Tail]) ->
+format_stacktrace([{Module, Func, Arity, [{file, Path}, {line, Line}]} | Tail]) when is_integer(Arity) ->
   FuncName = iolist_to_binary([atom_to_binary(Module, utf8), ":", atom_to_binary(Func, utf8), "/", integer_to_binary(Arity)]),
   Step = iolist_to_binary([Path, ":", integer_to_binary(Line), " in fun ", FuncName, ";"]),
   iolist_to_binary([Step, 10, 13, format_stacktrace(Tail)]);
-format_stacktrace([{Module, Func, Args, _} | Tail]) ->
-  FuncName = iolist_to_binary([atom_to_binary(Module, utf8), ":", atom_to_binary(Func, utf8)]),
-  Step = io_lib:format("~s(~p)~n", [FuncName, Args]),
+format_stacktrace([{Module, Func, Args, [{file, Path}, {line, Line}]} | Tail]) ->
+  StrArgs = io_lib:format("~p", [Args]),
+  FuncName = iolist_to_binary([atom_to_binary(Module, utf8), ":", atom_to_binary(Func, utf8), "(", StrArgs, ")"]),
+  Step = iolist_to_binary([Path, ":", integer_to_binary(Line), " in fun ", FuncName, ";"]),
   iolist_to_binary([Step, 10, 13, format_stacktrace(Tail)]).
