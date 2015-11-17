@@ -83,6 +83,6 @@ build_request(Msg, Level, Metadata) ->
     message => Msg,
     timestamp => qdate:unixtime(),
     level => Level,
-    loger => ?LOGER_NAME,
+    logger => ?LOGER_NAME,
     platform => <<"erlang">>
   }.
