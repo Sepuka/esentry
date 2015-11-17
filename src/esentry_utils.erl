@@ -19,7 +19,9 @@ to_binary(Map) when is_map(Map) ->
     error:badarg ->
       List = maps:to_list(Map),
       jsx:encode(process_list(List))
-  end.
+  end;
+to_binary(Details) ->
+  list_to_binary(term_to_string(Details)).
 
 process_list(Details) ->
   process_list(Details, []).
@@ -39,14 +41,14 @@ format_stacktrace([{Module, Func, Arity, [{file, Path}, {line, Line}]} | Tail]) 
   Step = iolist_to_binary([Path, ":", integer_to_binary(Line), " in fun ", FuncName, ";"]),
   iolist_to_binary([Step, 10, 13, format_stacktrace(Tail)]);
 format_stacktrace([{Module, Func, Args, [{file, Path}, {line, Line}]} | Tail]) ->
-  StrArgs = args_to_string(Args),
+  StrArgs = term_to_string(Args),
   FuncName = iolist_to_binary([atom_to_binary(Module, utf8), ":", atom_to_binary(Func, utf8), "(", StrArgs, ")"]),
   Step = iolist_to_binary([Path, ":", integer_to_binary(Line), " in fun ", FuncName, ";"]),
   iolist_to_binary([Step, 10, 13, format_stacktrace(Tail)]);
 format_stacktrace([{Module, Func, Args0, Args1} | Tail]) ->
-  FuncName = iolist_to_binary([atom_to_binary(Module, utf8), ":", atom_to_binary(Func, utf8), "(", args_to_string(Args0), ",", args_to_string(Args1), "])"]),
+  FuncName = iolist_to_binary([atom_to_binary(Module, utf8), ":", atom_to_binary(Func, utf8), "(", term_to_string(Args0), ",", term_to_string(Args1), "])"]),
   iolist_to_binary([FuncName, 10, 13, format_stacktrace(Tail)]).
 
 %% @private
-args_to_string(Args) ->
+term_to_string(Args) ->
   lists:flatten(io_lib:format("~p", [Args])).
