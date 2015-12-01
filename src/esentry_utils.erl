@@ -2,15 +2,22 @@
 
 -export([format_reason/1]).
 
-format_reason({Reason, Details}) ->
+format_reason({Reason, Details}) when is_atom(Reason) ->
   BinaryReason = atom_to_binary(Reason, utf8),
   BinaryDetails = to_binary(Details),
   Trace = format_stacktrace(erlang:get_stacktrace()),
   <<BinaryReason/binary, ":", BinaryDetails/binary, 10, 13, "StackTrace:", Trace/binary>>;
-format_reason(Reason) ->
+format_reason(Reason) when is_atom(Reason) ->
   BinaryReason = atom_to_binary(Reason, utf8),
   Trace = format_stacktrace(erlang:get_stacktrace()),
-  <<BinaryReason/binary, ":", 10, 13, "StackTrace:", Trace/binary>>.
+  <<BinaryReason/binary, ":", 10, 13, "StackTrace:", Trace/binary>>;
+format_reason({{Reason}, Details}) ->
+  BinaryReason = term_to_string(Reason),
+  BinaryDetails = to_binary(Details),
+  Trace = format_stacktrace(erlang:get_stacktrace()),
+  <<BinaryReason/binary, ":", BinaryDetails/binary, 10, 13, "StackTrace:", Trace/binary>>;
+format_reason(Reason) ->
+  term_to_string(Reason).
 
 to_binary(Map) when is_map(Map) ->
   try
