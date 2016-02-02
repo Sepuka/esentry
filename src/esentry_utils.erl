@@ -37,7 +37,8 @@ process_list([], Proplist) ->
   Proplist;
 process_list([{Key, List} | Tail], Acc) when is_list(List) ->
   process_list(Tail, [{Key, format_stacktrace(List)}] ++ Acc);
-process_list([{Key, Value} | Tail], Acc) ->
+process_list([{Key, RawValue} | Tail], Acc) ->
+  Value = to_binary(RawValue),
   process_list(Tail, [{Key, Value}] ++ Acc).
 
 %% @private
