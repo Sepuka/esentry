@@ -5,6 +5,7 @@
         protocol, [
           {public_key, <<"public_key">>},
           {secret_key, <<"secret_key">>},
+          {protocol, <<"https">>},
           {host, <<"sentry.example.com">>},
           {project_id, <<"1">>}
         ]

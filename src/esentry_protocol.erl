@@ -18,14 +18,15 @@ headers() ->
     {"User-Agent", ?ESENTRY_USER_AGENT}
   ].
 
-url() ->
-  ProjectId = esentry_config:get_project_id(),
-  Path = <<"/api/", ProjectId/binary, "/store/">>,
-  Host = esentry_config:get_host(),
-  lists:flatten(io_lib:format("http://~s~s", [Host, Path])).
-
 send(Body) when is_map(Body) ->
   JSON = jsx:encode(Body),
   send(JSON);
 send(Body) ->
   httpc:request(post, {url(), headers(), "application/json", Body}, [], []).
+
+url() ->
+  ProjectId = esentry_config:get_project_id(),
+  Path = <<"/api/", ProjectId/binary, "/store/">>,
+  Host = esentry_config:get_host(),
+  Protocol = esentry_config:get_protocol(),
+  lists:flatten(io_lib:format("~s://~s~s", [Protocol, Host, Path])).
